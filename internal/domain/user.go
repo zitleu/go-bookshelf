@@ -7,12 +7,12 @@ import (
 )
 
 type User struct {
-	UUID         uuid.UUID
-	Username     string
-	Email        string
-	PasswordHash string `json:"-"`
-	CreatedAt    time.Time
-	UpdatedAt    *time.Time
+	UUID         uuid.UUID `json:"id" db:"id"`
+	Username     string `json:"username" db:"username"`
+	Email        string `json:"email" db:"email"`
+	PasswordHash string `json:"-" db:"password_hash"`
+	CreatedAt    time.Time `json:"create_at" db:"created_at"`
+	UpdatedAt    *time.Time `json:"updated_at" db:"updated_at"`
 }
 
 func (u *User) ToPublic() UserPublic {
