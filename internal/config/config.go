@@ -19,7 +19,7 @@ func getEnv(key, fallback string) string {
 func Load() *Config {
 	return &Config{
 		Port: getEnv("PORT", "8080"),
-		DatabaseURL: getEnv("DATABASE_URL", "postgres://localhost:5432/mydb"),
+		DatabaseURL: getEnv("DATABASE_URL", "postgres://localhost:5432/bookshelf"),
 		JWTSecret: getEnv("JWT_SECRET", "jwtsecret"),
 	}
 
