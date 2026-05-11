@@ -6,16 +6,26 @@ import (
 	"net/http"
 
 	"github.com/bookshelf/monolith/internal/config"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
 	cfg := config.Load()
-
-	http.HandleFunc("/health", health)
-
 	addr := ":" + cfg.Port
+
+	r := chi.NewRouter()
+
+	// middleware
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.RequestID)
+
+	// routes
+	r.Get("/health", health)
+
 	fmt.Printf("Server starting on %s\n", addr)
-	http.ListenAndServe(addr, nil)
+	http.ListenAndServe(addr, r)
 }
 
 func health(w http.ResponseWriter, r *http.Request) {
