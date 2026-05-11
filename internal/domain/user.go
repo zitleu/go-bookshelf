@@ -7,17 +7,17 @@ import (
 )
 
 type User struct {
-	UUID         uuid.UUID `json:"id" db:"id"`
-	Username     string `json:"username" db:"username"`
-	Email        string `json:"email" db:"email"`
-	PasswordHash string `json:"-" db:"password_hash"`
-	CreatedAt    time.Time `json:"create_at" db:"created_at"`
+	ID           uuid.UUID  `json:"id" db:"id"`
+	Username     string     `json:"username" db:"username"`
+	Email        string     `json:"email" db:"email"`
+	PasswordHash string     `json:"-" db:"password_hash"`
+	CreatedAt    time.Time  `json:"create_at" db:"created_at"`
 	UpdatedAt    *time.Time `json:"updated_at" db:"updated_at"`
 }
 
 func (u *User) ToPublic() UserPublic {
 	return UserPublic{
-		UUID:      u.UUID,
+		UUID:      u.ID,
 		Username:  u.Username,
 		Email:     u.Email,
 		CreatedAt: u.CreatedAt,
@@ -27,7 +27,7 @@ func (u *User) ToPublic() UserPublic {
 
 func (u *User) ToSummary() UserSummary {
 	return UserSummary{
-		ID:       u.UUID,
+		ID:       u.ID,
 		Username: u.Username,
 	}
 }
