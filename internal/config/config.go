@@ -9,11 +9,11 @@ type Config struct {
 }
 
 func getEnv(key, fallback string) string {
-	if val, exists := os.LookupEnv(key); exists {
+	if val := os.Getenv(key); val != "" {
 		return val
 	}
-
 	return fallback
+
 }
 
 func Load() *Config {
