@@ -4,15 +4,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/bookshelf/monolith/internal/config"
 )
 
 func main() {
-	fmt.Println("Hello, Bookshelf!")
+	cfg := config.Load()
 
 	http.HandleFunc("/health", health)
 
-	http.ListenAndServe(":8080", nil)
-
+	addr := ":" + cfg.Port
+	fmt.Printf("Server starting on %s\n", addr)
+	http.ListenAndServe(addr, nil)
 }
 
 func health(w http.ResponseWriter, r *http.Request) {
