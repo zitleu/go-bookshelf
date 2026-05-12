@@ -17,7 +17,7 @@ type User struct {
 
 func (u *User) ToPublic() UserPublic {
 	return UserPublic{
-		ID:      u.ID,
+		ID:        u.ID,
 		Username:  u.Username,
 		Email:     u.Email,
 		CreatedAt: u.CreatedAt,
@@ -33,7 +33,7 @@ func (u *User) ToSummary() UserSummary {
 }
 
 type UserPublic struct {
-	ID      uuid.UUID
+	ID        uuid.UUID
 	Username  string
 	Email     string
 	CreatedAt time.Time
