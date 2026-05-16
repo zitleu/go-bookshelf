@@ -7,12 +7,12 @@ import (
 )
 
 type User struct {
-	ID           uuid.UUID  `json:"id" db:"id"`
-	Username     string     `json:"username" db:"username"`
-	Email        string     `json:"email" db:"email"`
-	PasswordHash string     `json:"-" db:"password_hash"`
-	CreatedAt    time.Time  `json:"create_at" db:"created_at"`
-	UpdatedAt    *time.Time `json:"updated_at" db:"updated_at"`
+	ID           uuid.UUID `db:"id"`
+	Username     string    `db:"username"`
+	Email        string    `db:"email"`
+	PasswordHash string    `json:"-" db:"password_hash"`
+	CreatedAt    time.Time `db:"created_at"`
+	UpdatedAt    time.Time `db:"updated_at"`
 }
 
 func (u *User) ToPublic() UserPublic {
@@ -33,16 +33,16 @@ func (u *User) ToSummary() UserSummary {
 }
 
 type UserPublic struct {
-	ID        uuid.UUID
-	Username  string
-	Email     string
-	CreatedAt time.Time
-	UpdatedAt *time.Time
+	ID        uuid.UUID `json:"id"`
+	Username  string    `json:"username"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type UserSummary struct {
-	ID       uuid.UUID
-	Username string
+	ID       uuid.UUID `json:"id"`
+	Username string    `json:"username"`
 }
 
 type RegisterRequest struct {
