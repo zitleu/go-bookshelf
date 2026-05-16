@@ -3,16 +3,24 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/bookshelf/monolith/internal/config"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 func main() {
 	cfg := config.Load()
-	addr := ":" + cfg.Port
+
+	db, err := sqlx.Connect("postgres", cfg.DatabaseURL)
+	if err != nil {
+		log.Fatalf("cannot connect to db: %v", err)
+	}
+	defer db.Close()
 
 	r := chi.NewRouter()
 
@@ -24,6 +32,7 @@ func main() {
 	// routes
 	r.Get("/health", health)
 
+	addr := ":" + cfg.Port
 	fmt.Printf("Server starting on %s\n", addr)
 	http.ListenAndServe(addr, r)
 }
