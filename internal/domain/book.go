@@ -11,7 +11,7 @@ type Book struct {
 	ID            uuid.UUID       `db:"id"`
 	Title         string          `db:"title"`
 	Author        string          `db:"author"`
-	CreatedBy     uuid.UUID       `db:"created_by"`
+	CreatedBy     string          `db:"created_by"`
 	CreatedAt     time.Time       `db:"created_at"`
 	UpdatedAt     time.Time       `db:"updated_at"`
 	Description   sql.NullString  `db:"description"`
