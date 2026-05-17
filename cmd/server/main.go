@@ -32,6 +32,7 @@ func main() {
 	// routes
 	r.Get("/health", health)
 
+	// api
 	addr := ":" + cfg.Port
 	fmt.Printf("Server starting on %s\n", addr)
 	http.ListenAndServe(addr, r)

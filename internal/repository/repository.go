@@ -1,1 +1,20 @@
 package repository
+
+import (
+	"errors"
+
+	"github.com/jmoiron/sqlx"
+)
+
+var (
+	ErrUserNotFound      = errors.New("user not found")
+	ErrUserAlreadyExists = errors.New("user already exists")
+)
+
+type Repository struct {
+	userReposotiry UserRepository
+}
+
+func New(db *sqlx.DB) *Repository {
+	return &Repository{}
+}
