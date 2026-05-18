@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/bookshelf/monolith/internal/domain"
 	"github.com/google/uuid"
@@ -20,10 +21,12 @@ func NewUserRepository(db *sqlx.DB) *UserRepository {
 
 func (r *UserRepository) Create(ctx context.Context, user *domain.User) error {
 	user.ID = uuid.New()
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
 
 	query := `
-		INSERT INTO users(id, username, email, password_hash,created_at)
-		VALUES(:id, :username, :email, :password_hash, :created_at)
+		INSERT INTO users(id, username, email, password_hash,created_at, updated_at)
+		VALUES(:id, :username, :email, :password_hash, :created_at, :updated_at)
 	`
 
 	_, err := r.db.NamedExecContext(ctx, query, user)
@@ -102,6 +105,7 @@ func (r *UserRepository) Update(ctx context.Context, user *domain.User) error {
 		SET username = :username,
 			email = :email,
 			password_hash = :password_hash
+			updated_at = NOW()
 		WHERE id = :id
 	`
 
