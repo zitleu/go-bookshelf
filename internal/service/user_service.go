@@ -3,9 +3,12 @@ package service
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/bookshelf/monolith/internal/domain"
 	"github.com/bookshelf/monolith/internal/repository"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -56,7 +59,7 @@ func (s *UserService) Register(ctx context.Context, req domain.RegisterRequest) 
 	}
 
 	if exists {
-		return nil, ErrUserExists
+		return nil, ErrUsernameExists
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
@@ -75,10 +78,15 @@ func (s *UserService) Register(ctx context.Context, req domain.RegisterRequest) 
 		return nil, err
 	}
 
+	token, err := s.generateToken(user.ID)
+	if err != nil {
+		return nil, err
+	}
+
 	authResponse := domain.AuthResponse{
-		AccessToken: "",
-		TokenType:   "",
-		ExpiresIn:   0,
+		AccessToken: token,
+		TokenType:   "Bearer",
+		ExpiresIn:   3600,
 		User: domain.UserPublic{
 			ID:        user.ID,
 			Username:  user.Username,
@@ -89,4 +97,46 @@ func (s *UserService) Register(ctx context.Context, req domain.RegisterRequest) 
 	}
 
 	return &authResponse, nil
+}
+
+func (s *UserService) generateToken(userID uuid.UUID) (string, error) {
+	claims := jwt.RegisteredClaims{
+		Subject:   userID.String(),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+		IssuedAt:  jwt.NewNumericDate(time.Now()),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	signedToken, err := token.SignedString([]byte(s.jwtSecret))
+	if err != nil {
+		return "", err
+	}
+
+	return signedToken, nil
+}
+
+func (s *UserService) ValidateToken(tokenString string) (string, error) {
+	claims := &jwt.RegisteredClaims{}
+
+	token, err := jwt.ParseWithClaims(
+		tokenString,
+		claims,
+		func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, ErrInvalidCredentials
+			}
+			return []byte(s.jwtSecret), nil
+		},
+	)
+
+	if err != nil {
+		return "", ErrInvalidCredentials
+	}
+
+	if !token.Valid {
+		return "", ErrInvalidCredentials
+	}
+
+	return claims.Subject, nil
 }
